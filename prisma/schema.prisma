@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+}
+
+model Invitation {
+  id              String           @id @default(cuid())
+  token           String           @unique
+  receiverName    String
+  greeting        String
+  intro           String
+  question        String
+  date            String
+  time            String
+  locationName    String
+  locationAddress String
+  mapsUrl         String?
+  dressCode       String?
+  budgetNote      String?
+  personalMessage String?
+  status          InvitationStatus @default(PENDING)
+  createdAt       DateTime         @default(now())
+  acceptedAt      DateTime?
+  itinerary       ItineraryItem[]
+  suggestions     Suggestion[]
+}
+
+model ItineraryItem {
+  id           String     @id @default(cuid())
+  invitationId String
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  sortOrder    Int
+  time         String
+  title        String
+  description  String
+}
+
+model Suggestion {
+  id           String     @id @default(cuid())
+  invitationId String
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  categories   String[]
+  note         String
+  createdAt    DateTime   @default(now())
+}
