@@ -8,6 +8,7 @@ import { QuestionScene } from './QuestionScene';
 import { CelebrationScene } from './CelebrationScene';
 import { EnvelopeScene } from './EnvelopeScene';
 import { DatePlanScene } from './DatePlanScene';
+import { AmbientSky } from './AmbientSky';
 
 export function InvitationExperience({ invitation }: { invitation: Invitation }) {
   const [scene, setScene] = useState<InvitationScene>('greeting');
@@ -24,10 +25,14 @@ export function InvitationExperience({ invitation }: { invitation: Invitation })
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-5 py-8">
-      <div className="relative w-full max-w-lg overflow-hidden rounded-[2rem] border-2 border-ink bg-white p-6 shadow-brutalInkLg md:p-8">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-roseSoft/25 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -left-20 h-52 w-52 rounded-full bg-linen blur-3xl" />
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-5 py-8">
+      {/* Living Sky Ambient Background Layer */}
+      <AmbientSky scene={scene} />
+
+      {/* Main Story Card (Preserving overflow-hidden for button physics) */}
+      <div className="relative w-full max-w-lg overflow-hidden rounded-[2rem] border border-stone-300/70 bg-paper/90 p-6 shadow-lift backdrop-blur-md md:p-8 transition-all duration-700">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-sunset-peach/30 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -left-20 h-52 w-52 rounded-full bg-accent-rose/25 blur-3xl" />
 
         <AnimatePresence mode="wait">
           <motion.div

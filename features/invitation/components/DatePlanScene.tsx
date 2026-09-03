@@ -1,44 +1,72 @@
 'use client';
 
 import Link from 'next/link';
-import { Calendar, Clock, MapPin, Shirt, WalletCards } from 'lucide-react';
+import { Calendar, Clock, MapPin, Shirt, WalletCards, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { Invitation } from '../types';
 
 export function DatePlanScene({ invitation }: { invitation: Invitation }) {
   const details = [
-    { icon: Calendar, label: 'Date', value: invitation.date },
-    { icon: Clock, label: 'Time', value: invitation.time },
-    { icon: MapPin, label: 'Place', value: invitation.locationName, sub: invitation.locationAddress },
-    { icon: Shirt, label: 'Dress code', value: invitation.dressCode },
-    { icon: WalletCards, label: 'Budget', value: invitation.budgetNote },
+    { icon: Calendar, label: 'Date', value: invitation.date, tilt: '-rotate-0.5' },
+    { icon: Clock, label: 'Time', value: invitation.time, tilt: 'rotate-0.5' },
+    { icon: MapPin, label: 'Place', value: invitation.locationName, sub: invitation.locationAddress, tilt: '-rotate-0.5' },
+    { icon: Shirt, label: 'Dress code', value: invitation.dressCode, tilt: 'rotate-0.5' },
+    { icon: WalletCards, label: 'Budget', value: invitation.budgetNote, tilt: '-rotate-0.5' },
   ];
 
   return (
-    <section className="min-h-[34rem]">
-      <p className="text-sm tracking-[0.28em] text-stone-400 uppercase">Date plan</p>
-      <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-ink">Ini rencana kecilnya.</h2>
-      {invitation.personalMessage ? <p className="mt-4 text-sm leading-7 text-stone-600">{invitation.personalMessage}</p> : null}
+    <section className="min-h-[34rem] py-2">
+      {/* Header with Washi Tape Accent */}
+      <div className="relative text-center pb-4">
+        <p className="font-handwriting text-2xl text-accent-rose">
+          Our shared itinerary
+        </p>
+        <h2 className="mt-1 font-serif text-3xl font-medium tracking-tight text-ink-soft md:text-4xl">
+          Ini rencana kecilnya.
+        </h2>
+        {invitation.personalMessage && (
+          <p className="mx-auto mt-3 max-w-sm font-sans text-sm leading-6 text-stone-600 italic">
+            &ldquo;{invitation.personalMessage}&rdquo;
+          </p>
+        )}
+      </div>
 
-      <div className="mt-7 space-y-3">
+      {/* Details Grid (Sticky Note & Polaroid Style) */}
+      <div className="mt-6 space-y-3">
         {details.map((item, index) => {
           const Icon = item.icon;
           return item.value ? (
             <motion.div
               key={item.label}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.12, duration: 0.36 }}
-              className="rounded-2xl border-2 border-ink bg-white p-4 shadow-brutalInk hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutalInkLg transition-all duration-150"
+              transition={{ delay: index * 0.1, duration: 0.35, ease: 'easeOut' }}
+              className={`relative rounded-2xl border border-stone-300/80 bg-white/90 p-4 shadow-lift transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${item.tilt}`}
             >
-              <div className="flex gap-3">
-                <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink bg-roseSoft/25 text-roseDeep">
-                  <Icon size={17} />
+              {/* Subtle top tape snippet */}
+              <div 
+                className="pointer-events-none absolute -top-2 left-6 h-4 w-16 bg-sunset-peach/60 shadow-tape opacity-80"
+                style={{
+                  clipPath: 'polygon(0% 15%, 5% 0%, 95% 0%, 100% 15%, 95% 30%, 100% 45%, 95% 60%, 100% 75%, 95% 90%, 100% 100%, 0% 100%, 5% 85%, 0% 70%, 5% 55%, 0% 40%, 5% 25%)'
+                }}
+              />
+
+              <div className="flex items-start gap-3.5">
+                <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-accent-rose/40 bg-accent-rose/15 text-roseDeep">
+                  <Icon size={16} />
                 </div>
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-stone-400">{item.label}</p>
-                  <p className="mt-1 text-sm font-bold text-ink">{item.value}</p>
-                  {item.sub ? <p className="mt-1 text-sm leading-6 text-stone-600">{item.sub}</p> : null}
+                  <p className="font-handwriting text-lg leading-tight text-stone-400">
+                    {item.label}
+                  </p>
+                  <p className="font-serif text-base font-medium text-ink-soft">
+                    {item.value}
+                  </p>
+                  {item.sub && (
+                    <p className="mt-0.5 font-sans text-xs leading-5 text-stone-500">
+                      {item.sub}
+                    </p>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -46,33 +74,70 @@ export function DatePlanScene({ invitation }: { invitation: Invitation }) {
         })}
       </div>
 
-      <div className="mt-7 rounded-3xl border-2 border-ink bg-white p-5 shadow-brutalInk">
-        <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-stone-400">Itinerary</p>
-        <div className="space-y-4">
-          {invitation.itinerary.map((item, index) => (
-            <motion.div
-              key={`${item.time}-${item.title}`}
-              initial={{ opacity: 0, x: -8 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.55 + index * 0.14, duration: 0.36 }}
-              className="grid grid-cols-[4.5rem_1fr] gap-3"
-            >
-              <p className="text-sm font-bold text-roseDeep">{item.time}</p>
-              <div>
-                <p className="text-sm font-bold text-ink">{item.title}</p>
-                <p className="mt-1 text-sm leading-6 text-stone-500">{item.description}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
+      {/* Flight Path Timeline (Itinerary) */}
+      {invitation.itinerary && invitation.itinerary.length > 0 && (
+        <div className="relative mt-9 rounded-3xl border border-stone-300/80 bg-[#FCFAF6] p-6 shadow-lift">
+          <div className="flex items-center justify-between border-b border-stone-200 pb-3 mb-5">
+            <p className="font-serif text-lg font-medium text-ink-soft">
+              Flight Path Timeline
+            </p>
+            <span className="font-handwriting text-xl text-accent-rose">
+              step by step ✈️
+            </span>
+          </div>
 
-      <div className="mt-8 text-center">
-        <button className="inline-flex items-center justify-center rounded-2xl border-2 border-ink bg-ink px-8 py-3.5 text-sm font-bold text-white shadow-brutalRose hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutalRoseLg transition-all active:translate-x-0 active:translate-y-0 active:shadow-brutalRose">Can't wait</button>
-        <p className="mt-4 text-xs leading-6 text-stone-400">
-          Kurang cocok?{' '}
-          <Link href={`/i/${invitation.token}/suggest`} className="text-roseDeep font-bold underline decoration-roseSoft underline-offset-4">
-            coba {invitation.receiverName} beri rekomendasi plannya
+          <div className="relative pl-6 space-y-6">
+            {/* SVG Flight Path Dashed Line */}
+            <div className="absolute left-[11px] top-2 bottom-2 w-px border-l-2 border-dashed border-stone-300/90" />
+
+            {invitation.itinerary.map((item, index) => (
+              <motion.div
+                key={`${item.time}-${item.title}`}
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.35 + index * 0.12, duration: 0.36 }}
+                className="relative"
+              >
+                {/* Node Milestone Circle */}
+                <div className="absolute -left-[29px] top-1 flex h-6 w-6 items-center justify-center rounded-full border border-amber-300 bg-white shadow-xs">
+                  <div className="h-2 w-2 rounded-full bg-roseDeep" />
+                </div>
+
+                {/* Content */}
+                <div>
+                  <span className="font-handwriting text-xl text-roseDeep font-medium">
+                    {item.time}
+                  </span>
+                  <h3 className="font-serif text-base font-medium text-ink-soft mt-0.5">
+                    {item.title}
+                  </h3>
+                  <p className="mt-1 font-sans text-xs leading-5 text-stone-500">
+                    {item.description}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Footer CTA & Suggestion Link */}
+      <div className="mt-9 text-center pb-2">
+        <button
+          type="button"
+          className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-400/60 bg-white px-9 py-3.5 text-sm font-serif font-medium text-ink-soft shadow-lift hover:shadow-md hover:-translate-y-0.5 transition-all active:translate-y-0"
+        >
+          <span>Can&apos;t wait for this date</span>
+          <Send size={14} className="text-accent-rose" />
+        </button>
+
+        <p className="mt-4 font-sans text-xs leading-6 text-stone-400">
+          Ada yang kurang pas?{' '}
+          <Link
+            href={`/i/${invitation.token}/suggest`}
+            className="font-handwriting text-lg text-roseDeep hover:underline underline-offset-4"
+          >
+            coba {invitation.receiverName} beri rekomendasi plannya ✍️
           </Link>
         </p>
       </div>
