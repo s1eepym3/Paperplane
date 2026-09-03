@@ -54,6 +54,7 @@ export function QuestionScene({ invitation, onAccept }: { invitation: Invitation
       <div className="relative mt-10 flex flex-col items-center justify-center gap-6 min-h-[9rem] w-full">
         {/* Yes Button: Vintage Stamp / Wax Seal Sticker */}
         <motion.button
+          type="button"
           onClick={onAccept}
           whileHover={{
             rotate: [-1.5, 1.5, -1.5, 1.5, 0],

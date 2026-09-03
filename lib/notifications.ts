@@ -9,7 +9,7 @@ export async function sendEmailNotification({
   const toEmail = process.env.NOTIFICATION_EMAIL;
 
   if (!apiKey || !toEmail) {
-    console.log('Skipping email notification: RESEND_API_KEY or NOTIFICATION_EMAIL not set.');
+    console.warn('Skipping email notification: RESEND_API_KEY or NOTIFICATION_EMAIL not set in environment.');
     return;
   }
 
@@ -21,7 +21,7 @@ export async function sendEmailNotification({
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        from: 'Plan Your Date <onboarding@resend.dev>',
+        from: 'Paperplane <onboarding@resend.dev>',
         to: toEmail,
         subject,
         html,
