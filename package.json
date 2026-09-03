@@ -1,4 +1,5 @@
 {
+  "name": "paperplane",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && prisma migrate deploy && next build",
