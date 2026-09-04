@@ -34,7 +34,85 @@ const PARTICLES: Particle[] = [
   { id: 18, x: 66, y: 46, size: 6, duration: 10, delay: 3.1 },
 ];
 
+interface NightStar {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  duration: number; // 2.0s - 4.0s
+  delay: number;
+  glow: string;
+}
+
+const NIGHT_STARS: NightStar[] = [
+  { id: 1, x: 8, y: 12, size: 2, duration: 2.4, delay: 0.2, glow: 'rgba(255, 255, 255, 0.7)' },
+  { id: 2, x: 22, y: 18, size: 3, duration: 3.2, delay: 1.1, glow: 'rgba(253, 224, 71, 0.75)' },
+  { id: 3, x: 38, y: 8, size: 2.5, duration: 2.8, delay: 0.6, glow: 'rgba(255, 255, 255, 0.8)' },
+  { id: 4, x: 54, y: 22, size: 2, duration: 3.6, delay: 1.8, glow: 'rgba(253, 224, 71, 0.6)' },
+  { id: 5, x: 68, y: 14, size: 3.5, duration: 2.2, delay: 0.4, glow: 'rgba(255, 255, 255, 0.9)' },
+  { id: 6, x: 82, y: 10, size: 2, duration: 3.8, delay: 2.3, glow: 'rgba(253, 224, 71, 0.7)' },
+  { id: 7, x: 94, y: 24, size: 2.5, duration: 2.6, delay: 1.4, glow: 'rgba(255, 255, 255, 0.75)' },
+  { id: 8, x: 14, y: 38, size: 3, duration: 3.4, delay: 0.9, glow: 'rgba(253, 224, 71, 0.8)' },
+  { id: 9, x: 28, y: 48, size: 2, duration: 2.5, delay: 1.7, glow: 'rgba(255, 255, 255, 0.6)' },
+  { id: 10, x: 88, y: 42, size: 3, duration: 3.1, delay: 0.3, glow: 'rgba(253, 224, 71, 0.85)' },
+  { id: 11, x: 76, y: 52, size: 2, duration: 2.9, delay: 2.0, glow: 'rgba(255, 255, 255, 0.7)' },
+  { id: 12, x: 6, y: 68, size: 2.5, duration: 3.5, delay: 1.2, glow: 'rgba(253, 224, 71, 0.7)' },
+  { id: 13, x: 18, y: 80, size: 2, duration: 2.3, delay: 0.8, glow: 'rgba(255, 255, 255, 0.75)' },
+  { id: 14, x: 84, y: 74, size: 3, duration: 3.7, delay: 1.6, glow: 'rgba(253, 224, 71, 0.8)' },
+  { id: 15, x: 92, y: 86, size: 2, duration: 2.7, delay: 0.5, glow: 'rgba(255, 255, 255, 0.65)' },
+  { id: 16, x: 44, y: 42, size: 2, duration: 3.3, delay: 2.5, glow: 'rgba(253, 224, 71, 0.65)' },
+  { id: 17, x: 60, y: 36, size: 2.5, duration: 2.6, delay: 1.0, glow: 'rgba(255, 255, 255, 0.8)' },
+  { id: 18, x: 34, y: 84, size: 2, duration: 3.9, delay: 0.7, glow: 'rgba(253, 224, 71, 0.75)' },
+  { id: 19, x: 72, y: 88, size: 2.5, duration: 2.5, delay: 1.9, glow: 'rgba(255, 255, 255, 0.7)' },
+  { id: 20, x: 50, y: 92, size: 2, duration: 3.0, delay: 2.2, glow: 'rgba(253, 224, 71, 0.6)' },
+];
+
+interface Firefly {
+  id: number;
+  left: string;
+  top: string;
+  pathX: number[];
+  pathY: number[];
+  opacity: number[];
+  scale: number[];
+  duration: number;
+}
+
+const FIREFLIES: Firefly[] = [
+  {
+    id: 1,
+    left: '20%',
+    top: '60%',
+    pathX: [0, 48, 20, -38, 0],
+    pathY: [0, -35, -68, -22, 0],
+    opacity: [0.35, 0.95, 0.45, 0.9, 0.35],
+    scale: [0.9, 1.15, 0.85, 1.1, 0.9],
+    duration: 9.6,
+  },
+  {
+    id: 2,
+    left: '76%',
+    top: '52%',
+    pathX: [0, -42, -75, -24, 0],
+    pathY: [0, -48, -25, -62, 0],
+    opacity: [0.4, 0.9, 0.3, 0.95, 0.4],
+    scale: [1, 0.85, 1.15, 0.9, 1],
+    duration: 11.2,
+  },
+  {
+    id: 3,
+    left: '45%',
+    top: '70%',
+    pathX: [0, 30, -25, 35, 0],
+    pathY: [0, -52, -32, -78, 0],
+    opacity: [0.3, 0.85, 0.4, 0.95, 0.3],
+    scale: [0.85, 1.1, 0.9, 1.15, 0.85],
+    duration: 10.4,
+  },
+];
+
 export function AmbientSky({ scene }: { scene: InvitationScene }) {
+
   const reducedMotion = useReducedMotion();
   const [mounted, setMounted] = useState(false);
 
@@ -240,40 +318,110 @@ export function AmbientSky({ scene }: { scene: InvitationScene }) {
               />
             ))}
 
-          {/* Twilight / Night Twinkling Stars & Fireflies */}
-          {isTwilightNight &&
-            PARTICLES.map((star) => (
-              <motion.div
-                key={`star-${star.id}`}
-                className="absolute rounded-full bg-white"
-                style={{
-                  left: `${star.x}%`,
-                  top: `${star.y}%`,
-                  width: Math.max(2, star.size * 0.5),
-                  height: Math.max(2, star.size * 0.5),
-                  boxShadow:
-                    star.id % 3 === 0
-                      ? '0 0 6px 1px rgba(253, 224, 71, 0.7)'
-                      : '0 0 4px 1px rgba(255, 255, 255, 0.6)',
-                  willChange: 'transform, opacity',
-                }}
-                animate={
-                  reducedMotion
-                    ? undefined
-                    : {
-                        opacity: [0.15, 0.95, 0.15],
-                        scale: [0.8, 1.35, 0.8],
-                        y: [0, -6, 0],
-                      }
-                }
-                transition={{
-                  duration: star.duration * 0.45,
-                  delay: star.delay * 0.8,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-              />
-            ))}
+          {/* Twilight / Night State: Twinkling Stars, Wandering Fireflies & Shooting Star */}
+          {isTwilightNight && (
+            <>
+              {/* 1. Staggered randomized opacity twinkle loops (2–4s each) */}
+              {NIGHT_STARS.map((star) => (
+                <motion.div
+                  key={`star-${star.id}`}
+                  className="absolute rounded-full bg-white"
+                  style={{
+                    left: `${star.x}%`,
+                    top: `${star.y}%`,
+                    width: star.size,
+                    height: star.size,
+                    boxShadow: `0 0 5px 1px ${star.glow}`,
+                    willChange: 'transform, opacity',
+                  }}
+                  animate={
+                    reducedMotion
+                      ? { opacity: 0.3 }
+                      : {
+                          opacity: [0.15, 0.95, 0.15],
+                          scale: [0.85, 1.25, 0.85],
+                        }
+                  }
+                  transition={{
+                    duration: star.duration,
+                    delay: star.delay,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  }}
+                />
+              ))}
+
+              {/* 2. Fireflies: 3 dots wandering on keyframe paths (glow = STATIC radial gradient sprite) */}
+              {!reducedMotion &&
+                FIREFLIES.map((f) => (
+                  <motion.div
+                    key={`firefly-${f.id}`}
+                    className="pointer-events-none absolute z-0 flex items-center justify-center"
+                    style={{
+                      left: f.left,
+                      top: f.top,
+                      width: 32,
+                      height: 32,
+                      transform: 'translate(-50%, -50%)',
+                      willChange: 'transform, opacity',
+                    }}
+                    animate={{
+                      x: f.pathX,
+                      y: f.pathY,
+                      opacity: f.opacity,
+                      scale: f.scale,
+                    }}
+                    transition={{
+                      duration: f.duration,
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                    }}
+                  >
+                    {/* STATIC radial gradient sprite */}
+                    <div
+                      className="absolute inset-0 rounded-full"
+                      style={{
+                        background:
+                          'radial-gradient(circle, rgba(253, 224, 71, 0.75) 0%, rgba(245, 158, 11, 0.25) 45%, transparent 70%)',
+                      }}
+                    />
+                    {/* Core golden dot */}
+                    <div className="relative h-1.5 w-1.5 rounded-full bg-amber-200 shadow-[0_0_4px_1px_rgba(253,224,71,0.9)]" />
+                  </motion.div>
+                ))}
+
+              {/* 3. Shooting Star Streak every ~7s (opacity in/out, transform only) */}
+              {!reducedMotion && (
+                <motion.div
+                  className="pointer-events-none absolute left-[18%] top-[12%] z-0"
+                  style={{
+                    willChange: 'transform, opacity',
+                  }}
+                  animate={{
+                    x: [-30, 250],
+                    y: [-18, 155],
+                    opacity: [0, 0, 0.95, 0.9, 0],
+                    scaleX: [0.1, 0.8, 1, 0.2],
+                  }}
+                  transition={{
+                    duration: 0.85,
+                    repeat: Infinity,
+                    repeatDelay: 6.15, // 0.85s flight + 6.15s delay = 7.0s cycle
+                    ease: 'easeOut',
+                  }}
+                >
+                  <div
+                    className="h-[2px] w-28 -rotate-[32deg] rounded-full origin-right"
+                    style={{
+                      background:
+                        'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 40%, rgba(254, 240, 138, 0.95) 90%, #FFFFFF 100%)',
+                      boxShadow: '0 0 6px 1px rgba(253, 224, 71, 0.7)',
+                    }}
+                  />
+                </motion.div>
+              )}
+            </>
+          )}
         </div>
       )}
     </div>

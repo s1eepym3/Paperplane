@@ -1,10 +1,12 @@
 'use client';
 
 import { motion } from 'framer-motion';
+
 import { ArrowRight, Feather } from 'lucide-react';
 import type { Invitation } from '../types';
 import { BreathingButton } from './motion/BreathingButton';
 import { InCardMotes } from './motion/InCardMotes';
+import { WordReveal } from './motion/WordReveal';
 
 export function GreetingScene({ invitation, onOpen }: { invitation: Invitation; onOpen: () => void }) {
   return (
@@ -29,20 +31,35 @@ export function GreetingScene({ invitation, onOpen }: { invitation: Invitation; 
         <div className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-accent-rose/20 text-ink-soft/70">
           <Feather size={19} />
         </div>
-        <p className="font-handwriting text-2xl tracking-wide text-ink-soft/80">
-          A little note for you...
-        </p>
+        <WordReveal
+          text="A little note for you..."
+          as="p"
+          delay={0.15}
+          className="font-handwriting text-2xl tracking-wide text-ink-soft/80"
+        />
       </div>
 
       <div className="my-auto py-6 relative z-10">
-        <h1 className="font-serif text-3xl font-medium tracking-tight text-ink-soft md:text-4xl">
-          {invitation.greeting}
-        </h1>
-        <div className="mx-auto my-5 h-px w-24 bg-stone-300/80" />
-        <p className="mx-auto max-w-sm text-base leading-8 text-stone-600 font-sans">
-          {invitation.intro}
-        </p>
+        <WordReveal
+          text={invitation.greeting}
+          as="h1"
+          delay={0.4}
+          className="font-serif text-3xl font-medium tracking-tight text-ink-soft md:text-4xl"
+        />
+        <motion.div
+          initial={{ scaleX: 0, opacity: 0 }}
+          animate={{ scaleX: 1, opacity: 1 }}
+          transition={{ delay: 0.8, duration: 0.45, ease: 'easeOut' }}
+          className="mx-auto my-5 h-px w-24 bg-stone-300/80 origin-center"
+        />
+        <WordReveal
+          text={invitation.intro}
+          as="p"
+          delay={0.9}
+          className="mx-auto max-w-sm text-base leading-8 text-stone-600 font-sans"
+        />
       </div>
+
 
       <div className="pb-2 relative z-10">
         <BreathingButton>

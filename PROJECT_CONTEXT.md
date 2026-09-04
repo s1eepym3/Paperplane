@@ -56,7 +56,9 @@ planyourdate/ (Repository: Paperplane)
 │       │   │   ├── HeartTrailLayer.tsx      # Fixed z-50 pointerdown particle layer spawning floating hearts (cap 12)
 │       │   │   ├── InCardMotes.tsx          # Drifting ambient hearts/sparkles behind card content (opacity 0.15-0.3)
 │       │   │   ├── PaperplaneMascot.tsx     # Protagonist mascot: choreographed scene transitions & envelope takeoff
-│       │   │   └── useTilt.ts               # Spring physics 3D tilt hook (±4deg) disabled on touch & reduced motion
+│       │   │   ├── useTilt.ts               # Spring physics 3D tilt hook (±4deg) disabled on touch & reduced motion
+│       │   │   └── WordReveal.tsx           # Word-by-word handwritten text reveal with ink blur simulation
+
 
 │       │   ├── AmbientSky.tsx               # Living sky background reactive to scene states (Golden Hour, Sunset, Twilight)
 │       │   ├── CelebrationScene.tsx         # Scene 3: Wax seal heart stamp & joyful acceptance feedback

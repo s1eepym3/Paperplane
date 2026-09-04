@@ -6,6 +6,7 @@ import { Sparkles } from 'lucide-react';
 import type { Invitation } from '../types';
 import { BreathingButton } from './motion/BreathingButton';
 import { InCardMotes } from './motion/InCardMotes';
+import { WordReveal } from './motion/WordReveal';
 
 export function QuestionScene({ invitation, onAccept }: { invitation: Invitation; onAccept: () => void }) {
   const [noAttempts, setNoAttempts] = useState(0);
@@ -37,13 +38,20 @@ export function QuestionScene({ invitation, onAccept }: { invitation: Invitation
         <Sparkles size={18} />
       </div>
 
-      <p className="font-handwriting text-2xl text-ink-soft/75 relative z-10">
-        One small question...
-      </p>
+      <WordReveal
+        text="One small question..."
+        as="p"
+        delay={0.12}
+        className="font-handwriting text-2xl text-ink-soft/75 relative z-10"
+      />
 
-      <h2 className="mt-2 font-serif text-3xl font-medium tracking-tight text-ink-soft md:text-4xl relative z-10">
-        {invitation.question}
-      </h2>
+      <WordReveal
+        text={invitation.question}
+        as="h2"
+        delay={0.38}
+        className="mt-2 font-serif text-3xl font-medium tracking-tight text-ink-soft md:text-4xl relative z-10"
+      />
+
 
       {/* Handwritten reaction notes */}
       <p className="mx-auto mt-5 min-h-[2rem] max-w-xs font-handwriting text-xl text-stone-500 transition-all duration-300 relative z-10">
