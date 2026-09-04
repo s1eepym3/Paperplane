@@ -1,23 +1,59 @@
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { motion, useAnimationControls } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import type { Invitation } from '../types';
 import { BreathingButton } from './motion/BreathingButton';
 import { InCardMotes } from './motion/InCardMotes';
 import { WordReveal } from './motion/WordReveal';
 
+interface PoofParticle {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  symbol: string;
+}
+
+const POOF_PARTICLES: PoofParticle[] = [
+  { id: 1, x: -16, y: -12, size: 12, symbol: '✦' },
+  { id: 2, x: 16, y: -10, size: 10, symbol: '✧' },
+  { id: 3, x: -12, y: 12, size: 10, symbol: '✦' },
+  { id: 4, x: 14, y: 10, size: 12, symbol: '✧' },
+];
+
 export function QuestionScene({ invitation, onAccept }: { invitation: Invitation; onAccept: () => void }) {
   const [noAttempts, setNoAttempts] = useState(0);
+  const [showPoof, setShowPoof] = useState(false);
+  const lastActionTimeRef = useRef(0);
+  const yesControls = useAnimationControls();
 
-  function handleNoAction(event: React.MouseEvent | React.TouchEvent) {
-    event.preventDefault();
-    setNoAttempts((prev) => Math.min(5, prev + 1));
+  function handleNoAction() {
+    const now = Date.now();
+    if (now - lastActionTimeRef.current < 300) {
+      return;
+    }
+    lastActionTimeRef.current = now;
+
+    setNoAttempts((prev) => {
+      const next = Math.min(5, prev + 1);
+      if (next === 5) {
+        setShowPoof(true);
+        window.setTimeout(() => setShowPoof(false), 800);
+      }
+      return next;
+    });
+
+    // YES button reacts happily with an excited bounce (transform only, resting scale remains 1)
+    yesControls.start({
+      scale: [1, 1.06, 1],
+      rotate: [0, -1.5, 1.5, 0],
+      transition: { duration: 0.45, ease: 'easeOut' },
+    });
   }
 
-  // Preserved exact scaling mathematics
-  const yesScale = 1 + noAttempts * 1.5;
+  // NO button shrinks across attempts: 1.0 -> 0.8 -> 0.6 -> 0.4 -> 0.2 -> 0
   const noScale = Math.max(0, 1 - noAttempts * 0.2);
 
   return (
@@ -66,20 +102,20 @@ export function QuestionScene({ invitation, onAccept }: { invitation: Invitation
       {/* Action Zone */}
       <div className="relative mt-10 flex flex-col items-center justify-center gap-6 min-h-[9rem] w-full z-10">
         {/* Yes Button: Vintage Stamp / Wax Seal Sticker wrapped with BreathingButton */}
-        <BreathingButton style={{ zIndex: 10 + noAttempts }}>
+        <BreathingButton style={{ zIndex: 10 }}>
           <motion.button
             type="button"
             onClick={onAccept}
+            animate={yesControls}
+            initial={{ scale: 1, rotate: 0 }}
             whileHover={{
               rotate: [-1.5, 1.5, -1.5, 1.5, 0],
-              transition: { duration: 0.35, ease: 'easeInOut' }
+              transition: { duration: 0.35, ease: 'easeInOut' },
             }}
             whileTap={{ scale: 0.96 }}
             style={{
-              transform: `scale(${yesScale})`,
               transformOrigin: 'center',
-              transition: 'transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1)',
-              zIndex: 10 + noAttempts,
+              zIndex: 10,
             }}
             className="relative inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-white/60 bg-roseDeep px-9 py-3.5 text-base font-serif font-medium text-white shadow-lift active:shadow-sm"
           >
@@ -89,22 +125,59 @@ export function QuestionScene({ invitation, onAccept }: { invitation: Invitation
           </motion.button>
         </BreathingButton>
 
-        {/* No Button: Shy handwritten text fading into memory */}
-        {noAttempts < 5 && (
-          <button
-            onTouchStart={handleNoAction}
+
+        {/* No Button: Star of the gag — shrinks per press and wobbles with losing confidence */}
+        <div className="relative min-h-[2rem] flex items-center justify-center">
+          <motion.button
+            type="button"
             onClick={handleNoAction}
-            style={{
-              transform: `scale(${noScale})`,
+            animate={{
+              scale: noScale,
               opacity: noScale,
-              transition: 'all 0.25s ease-out',
+              rotate:
+                noAttempts === 0
+                  ? 0
+                  : noAttempts % 2 === 1
+                  ? [0, -2, 2, 0]
+                  : [0, 2, -2, 0],
+            }}
+            transition={{
+              scale: { type: 'spring', stiffness: 170, damping: 18 },
+              opacity: { duration: 0.25, ease: 'easeOut' },
+              rotate: { duration: 0.4, ease: 'easeInOut' },
+            }}
+            style={{
+              transformOrigin: 'center',
               pointerEvents: noAttempts >= 5 ? 'none' : 'auto',
             }}
-            className="font-handwriting text-xl text-stone-400 hover:text-stone-600 transition-colors duration-150 px-4 py-1"
+            className="font-handwriting text-xl text-stone-400 hover:text-stone-600 transition-colors duration-150 px-4 py-1 select-none"
           >
             no...
-          </button>
-        )}
+          </motion.button>
+
+          {/* Vanish Poof Delight at Attempt 5 */}
+          {showPoof && (
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden="true">
+              {POOF_PARTICLES.map((p) => (
+                <motion.span
+                  key={p.id}
+                  initial={{ x: 0, y: 0, scale: 0.2, opacity: 0.95 }}
+                  animate={{
+                    x: p.x,
+                    y: p.y,
+                    scale: [0.2, 1.25, 0],
+                    opacity: [0.95, 0.8, 0],
+                  }}
+                  transition={{ duration: 0.55, ease: 'easeOut' }}
+                  style={{ fontSize: `${p.size}px` }}
+                  className="absolute text-accent-rose select-none font-serif"
+                >
+                  {p.symbol}
+                </motion.span>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );

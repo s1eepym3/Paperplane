@@ -205,10 +205,86 @@ export function AmbientSky({ scene }: { scene: InvitationScene }) {
       />
 
       {/* ============================================================ */}
+      {/* CELESTIAL LAYER: SUN (Day) <-> MOON (Night) Crossfade         */}
+      {/* ============================================================ */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        {/* DAY SUN: Warm radial-gradient sun (buttery core -> transparent halo, no hard rings) */}
+        <motion.div
+          initial={false}
+          animate={{
+            opacity: isTwilightNight ? 0 : 1,
+            scale: isSunsetBurst ? 1.08 : 1,
+            y: isSunsetBurst ? 14 : 0,
+          }}
+          transition={{ duration: 1.2, ease: 'easeInOut' }}
+          className="pointer-events-none absolute right-[12%] top-[8%] flex items-center justify-center"
+        >
+          {/* Soft Sun Halo - zero hard rings */}
+          <div
+            className="h-52 w-52 rounded-full"
+            style={{
+              background: isSunsetBurst
+                ? 'radial-gradient(circle, rgba(251, 146, 60, 0.4) 0%, rgba(244, 63, 94, 0.18) 38%, rgba(251, 191, 36, 0.05) 60%, transparent 72%)'
+                : 'radial-gradient(circle, rgba(254, 240, 138, 0.55) 0%, rgba(255, 218, 185, 0.28) 40%, rgba(254, 240, 138, 0.05) 60%, transparent 72%)',
+            }}
+          />
+          {/* Buttery Sun Core */}
+          <div
+            className="absolute h-20 w-20 rounded-full"
+            style={{
+              background: isSunsetBurst
+                ? 'radial-gradient(circle at 35% 35%, #FED7AA 0%, #FB923C 85%)'
+                : 'radial-gradient(circle at 35% 35%, #FEF9C3 0%, #FDE047 85%)',
+              boxShadow: isSunsetBurst
+                ? '0 0 32px 10px rgba(251, 146, 60, 0.4)'
+                : '0 0 28px 8px rgba(253, 224, 71, 0.4)',
+            }}
+          />
+        </motion.div>
+
+        {/* NIGHT MOON: Pale moon disc with soft glow halo */}
+        <motion.div
+          initial={false}
+          animate={{
+            opacity: isTwilightNight ? 1 : 0,
+            scale: isTwilightNight ? 1 : 0.9,
+            y: isTwilightNight ? 0 : -10,
+          }}
+          transition={{ duration: 1.2, ease: 'easeInOut' }}
+          className="pointer-events-none absolute right-[12%] top-[8%] flex items-center justify-center"
+        >
+          {/* Soft Moon Halo */}
+          <div
+            className="h-44 w-44 rounded-full"
+            style={{
+              background:
+                'radial-gradient(circle, rgba(224, 231, 255, 0.22) 0%, rgba(199, 210, 254, 0.08) 45%, transparent 70%)',
+            }}
+          />
+          {/* Pale Moon Disc */}
+          <div
+            className="absolute h-14 w-14 rounded-full bg-[#FAF8F5]"
+            style={{
+              boxShadow: '0 0 20px 6px rgba(224, 231, 255, 0.3)',
+            }}
+          >
+            {/* Subtle soft crescent shading */}
+            <div
+              className="absolute inset-0 rounded-full"
+              style={{
+                background:
+                  'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9) 0%, rgba(240, 235, 225, 0.7) 65%, rgba(200, 205, 225, 0.4) 100%)',
+              }}
+            />
+          </div>
+        </motion.div>
+      </div>
+
+      {/* ============================================================ */}
       {/* LAYER 2: PARALLAX CLOUDS & ATMOSPHERIC MIST                  */}
       {/* ============================================================ */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Cloud Orb 1 (Top Left Drift) */}
+        {/* Cloud Orb 1 (Top Left Drift - scale only, no rotate to avoid WebKit blur artifacts) */}
         <motion.div
           style={{
             x: cloud1X,
@@ -219,21 +295,20 @@ export function AmbientSky({ scene }: { scene: InvitationScene }) {
             reducedMotion
               ? undefined
               : {
-                  scale: [1, 1.08, 1],
-                  rotate: [0, 8, 0],
+                  scale: [1, 1.06, 1],
                 }
           }
           transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
           className={`absolute -left-20 -top-20 h-96 w-96 rounded-full blur-[65px] transition-colors duration-1000 ${
             isTwilightNight
-              ? 'bg-indigo-900/40'
+              ? 'bg-indigo-950/25'
               : isSunsetBurst
-              ? 'bg-orange-300/40'
-              : 'bg-amber-200/35'
+              ? 'bg-orange-300/35'
+              : 'bg-amber-200/30'
           }`}
         />
 
-        {/* Cloud Orb 2 (Bottom Right Drift) */}
+        {/* Cloud Orb 2 (Bottom Right Drift - scale only, no rotate) */}
         <motion.div
           style={{
             x: cloud2X,
@@ -244,17 +319,16 @@ export function AmbientSky({ scene }: { scene: InvitationScene }) {
             reducedMotion
               ? undefined
               : {
-                  scale: [1, 1.12, 1],
-                  rotate: [0, -6, 0],
+                  scale: [1, 1.08, 1],
                 }
           }
           transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }}
           className={`absolute -bottom-24 -right-20 h-[30rem] w-[30rem] rounded-full blur-[75px] transition-colors duration-1000 ${
             isTwilightNight
-              ? 'bg-violet-950/45'
+              ? 'bg-violet-950/30'
               : isSunsetBurst
-              ? 'bg-rose-300/40'
-              : 'bg-rose-200/30'
+              ? 'bg-rose-300/35'
+              : 'bg-rose-200/25'
           }`}
         />
 
@@ -270,13 +344,14 @@ export function AmbientSky({ scene }: { scene: InvitationScene }) {
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
           className={`absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2 h-72 w-[34rem] rounded-full blur-[80px] transition-colors duration-1000 ${
             isTwilightNight
-              ? 'bg-indigo-700/20'
+              ? 'bg-indigo-800/15'
               : isSunsetBurst
-              ? 'bg-amber-400/30'
-              : 'bg-orange-100/40'
+              ? 'bg-amber-400/25'
+              : 'bg-orange-100/35'
           }`}
         />
       </div>
+
 
       {/* ============================================================ */}
       {/* LAYER 3: PARTICLE SYSTEM ("The Life")                        */}

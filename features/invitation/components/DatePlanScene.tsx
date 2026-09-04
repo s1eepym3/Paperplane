@@ -44,11 +44,11 @@ export function DatePlanScene({ invitation }: { invitation: Invitation }) {
   const shouldReduceMotion = useReducedMotion();
 
   const details = [
-    { icon: Calendar, label: 'Date', value: invitation.date, tilt: '-rotate-0.5' },
-    { icon: Clock, label: 'Time', value: invitation.time, tilt: 'rotate-0.5' },
-    { icon: MapPin, label: 'Place', value: invitation.locationName, sub: invitation.locationAddress, tilt: '-rotate-0.5' },
-    { icon: Shirt, label: 'Dress code', value: invitation.dressCode, tilt: 'rotate-0.5' },
-    { icon: WalletCards, label: 'Budget', value: invitation.budgetNote, tilt: '-rotate-0.5' },
+    { icon: Calendar, label: 'Date', value: invitation.date, tilt: -0.6 },
+    { icon: Clock, label: 'Time', value: invitation.time, tilt: 0.6 },
+    { icon: MapPin, label: 'Place', value: invitation.locationName, sub: invitation.locationAddress, tilt: -0.6 },
+    { icon: Shirt, label: 'Dress code', value: invitation.dressCode, tilt: 0.6 },
+    { icon: WalletCards, label: 'Budget', value: invitation.budgetNote, tilt: -0.6 },
   ];
 
   return (
@@ -88,10 +88,10 @@ export function DatePlanScene({ invitation }: { invitation: Invitation }) {
           return item.value ? (
             <motion.div
               key={item.label}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 15, rotate: item.tilt }}
+              animate={{ opacity: 1, y: 0, rotate: item.tilt }}
               transition={{ delay: index * 0.1, duration: 0.35, ease: 'easeOut' }}
-              className={`relative rounded-2xl border border-stone-300/80 bg-white/90 p-4 shadow-lift transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${item.tilt}`}
+              className="relative rounded-2xl border border-stone-300/80 bg-white/90 p-4 shadow-lift"
             >
               {/* Subtle top tape snippet */}
               <div 
@@ -158,25 +158,27 @@ export function DatePlanScene({ invitation }: { invitation: Invitation }) {
                       y: 0,
                       rotate: finalTilt,
                     }}
+                    whileHover={{ scale: 1.015 }}
                     transition={{
                       type: 'spring',
                       stiffness: 140,
                       damping: 14,
                       delay: index * 0.25,
                     }}
-                    className="relative rounded-2xl border border-stone-300/80 bg-white p-4 shadow-lift transition-transform duration-300 hover:scale-[1.01]"
+                    className="relative rounded-2xl border border-stone-300/80 bg-white p-4 shadow-lift"
                   >
+
                     {/* Washi tape snippet: fades in 150ms after its card */}
                     <motion.div
-                      initial={{ opacity: 0, scale: 0.85 }}
-                      animate={{ opacity: 1, scale: 1 }}
+                      initial={{ opacity: 0, scale: 0.85, rotate: isEven ? 2 : -2 }}
+                      animate={{ opacity: 1, scale: 1, rotate: isEven ? 2 : -2 }}
                       transition={{
                         delay: index * 0.25 + 0.15,
                         duration: 0.32,
                         ease: 'easeOut',
                       }}
                       className={`pointer-events-none absolute -top-3 ${
-                        isEven ? 'right-6 rotate-2' : 'left-6 -rotate-2'
+                        isEven ? 'right-6' : 'left-6'
                       } h-5 w-20 bg-sunset-peach/75 shadow-tape border-y border-white/50 z-20`}
                       style={{
                         clipPath:

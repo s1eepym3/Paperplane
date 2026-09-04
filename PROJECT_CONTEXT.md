@@ -200,9 +200,9 @@ Managed by a strict linear scene state machine: `InvitationScene = 'greeting' | 
    - Prompts recipient with the question (e.g., *"Mau pergi date sama aku?"*).
    - **Kinetic Button Mechanics**:
      - State `noAttempts` tracks rejections (0 to 5).
-     - **Yes Button Scale**: `yesScale = 1 + noAttempts * 1.5` (At attempt 5, scale reaches `8.5x`, blanketing the entire card).
-     - **No Button Scale**: `noScale = Math.max(0, 1 - noAttempts * 0.2)` (At attempt 5, scale hits `0` with `opacity: 0` and `pointerEvents: none`).
-     - **Card Boundary Containment**: The parent container in `InvitationExperience.tsx` explicitly specifies `overflow-hidden`. As the Yes button scales up, its visual geometry is cleanly masked within the rounded white card borders without bleeding into the background on mobile or desktop.
+     - **Yes Button**: YES static at scale 1 (breathing loop via `BreathingButton` + excited bounce reaction `scale: [1, 1.06, 1], rotate: [0, -1.5, 1.5, 0]` over 450ms on each NO press). YES never grows and never obscures the NO button or copy.
+     - **No Button Scale**: NO shrinks `1 → 0` across attempts (`noScale = Math.max(0, 1 - noAttempts * 0.2)`: 1.0 → 0.8 → 0.6 → 0.4 → 0.2 → 0) with losing-confidence wobble and spring physics (`stiffness: 170`, `damping: 18`). At attempt 5, NO vanishes completely (`opacity: 0`, `pointerEvents: 'none'`) triggering a 4-particle "poof" sparkle burst.
+     - **Card Boundary Containment**: The parent container in `InvitationExperience.tsx` explicitly specifies `overflow-hidden` with WebKit radial-gradient masking, keeping all motes, shadows, and particle effects cleanly clipped within the rounded card borders.
      - Playful dynamic status copy changes per attempt:
        - 0: *"Silakan pilih jawabanmu di bawah ini."*
        - 1: *"Eh? Yakin? 🥺"*
