@@ -9,9 +9,13 @@ import { CelebrationScene } from './CelebrationScene';
 import { EnvelopeScene } from './EnvelopeScene';
 import { DatePlanScene } from './DatePlanScene';
 import { AmbientSky } from './AmbientSky';
+import { useTilt } from './motion/useTilt';
+import { HeartTrailLayer } from './motion/HeartTrailLayer';
+import { PaperplaneMascot } from './motion/PaperplaneMascot';
 
 export function InvitationExperience({ invitation }: { invitation: Invitation }) {
   const [scene, setScene] = useState<InvitationScene>('greeting');
+  const { rotateX, rotateY } = useTilt();
 
   async function acceptInvitation() {
     try {
@@ -25,14 +29,32 @@ export function InvitationExperience({ invitation }: { invitation: Invitation })
   }
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-5 py-8">
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-5 py-8" style={{ perspective: 1200 }}>
+      {/* Global tap/pointerdown heart trail layer (z-50) */}
+      <HeartTrailLayer />
+
       {/* Living Sky Ambient Background Layer */}
       <AmbientSky scene={scene} />
 
-      {/* Main Story Card (Preserving overflow-hidden for button physics) */}
-      <div className="relative w-full max-w-lg overflow-hidden rounded-[2rem] border border-stone-300/70 bg-paper/90 p-6 shadow-lift backdrop-blur-md md:p-8 transition-all duration-700">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-sunset-peach/30 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -left-20 h-52 w-52 rounded-full bg-accent-rose/25 blur-3xl" />
+      {/* Story Card Container with Choreographed Paperplane Mascot */}
+      <div className="relative w-full max-w-lg">
+        {/* Choreographed Paperplane Mascot Layer (z-30: above card, below HeartTrailLayer) */}
+        <AnimatePresence mode="wait">
+          <PaperplaneMascot key={scene} scene={scene} />
+        </AnimatePresence>
+
+        {/* Main Story Card (Preserving overflow-hidden for button physics) */}
+        <motion.div
+          style={{
+            rotateX,
+            rotateY,
+            transformStyle: 'preserve-3d',
+          }}
+          className="relative w-full overflow-hidden rounded-[2rem] border border-stone-300/70 bg-paper/90 p-6 shadow-lift backdrop-blur-md md:p-8"
+        >
+          <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-sunset-peach/30 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-24 -left-20 h-52 w-52 rounded-full bg-accent-rose/25 blur-3xl" />
+
 
         <AnimatePresence mode="wait">
           <motion.div
@@ -50,7 +72,10 @@ export function InvitationExperience({ invitation }: { invitation: Invitation })
             {scene === 'plan' && <DatePlanScene invitation={invitation} />}
           </motion.div>
         </AnimatePresence>
-      </div>
-    </main>
-  );
+      </motion.div>
+    </div>
+  </main>
+);
 }
+
+

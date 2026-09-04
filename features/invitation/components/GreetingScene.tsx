@@ -3,6 +3,8 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, Feather } from 'lucide-react';
 import type { Invitation } from '../types';
+import { BreathingButton } from './motion/BreathingButton';
+import { InCardMotes } from './motion/InCardMotes';
 
 export function GreetingScene({ invitation, onOpen }: { invitation: Invitation; onOpen: () => void }) {
   return (
@@ -12,6 +14,9 @@ export function GreetingScene({ invitation, onOpen }: { invitation: Invitation; 
       transition={{ type: 'spring', stiffness: 100, damping: 14 }}
       className="relative flex min-h-[34rem] flex-col justify-between py-2 text-center"
     >
+      {/* Background drifting ambient motes */}
+      <InCardMotes />
+
       {/* Washi Tape Header Accent */}
       <div 
         className="pointer-events-none absolute -top-5 left-1/2 -translate-x-1/2 -rotate-1 h-7 w-32 bg-sunset-peach/80 shadow-tape backdrop-blur-xs border-y border-white/50 z-20" 
@@ -20,7 +25,7 @@ export function GreetingScene({ invitation, onOpen }: { invitation: Invitation; 
         }}
       />
 
-      <div className="pt-4">
+      <div className="pt-4 relative z-10">
         <div className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-accent-rose/20 text-ink-soft/70">
           <Feather size={19} />
         </div>
@@ -29,7 +34,7 @@ export function GreetingScene({ invitation, onOpen }: { invitation: Invitation; 
         </p>
       </div>
 
-      <div className="my-auto py-6">
+      <div className="my-auto py-6 relative z-10">
         <h1 className="font-serif text-3xl font-medium tracking-tight text-ink-soft md:text-4xl">
           {invitation.greeting}
         </h1>
@@ -39,15 +44,18 @@ export function GreetingScene({ invitation, onOpen }: { invitation: Invitation; 
         </p>
       </div>
 
-      <div className="pb-2">
-        <button
-          onClick={onOpen}
-          className="group relative mx-auto inline-flex items-center gap-2.5 rounded-full border border-stone-400/60 bg-white/90 px-8 py-3.5 text-sm font-medium text-ink-soft shadow-lift transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0"
-        >
-          <span>Open the letter</span>
-          <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-1 text-ink-soft/70" />
-        </button>
+      <div className="pb-2 relative z-10">
+        <BreathingButton>
+          <button
+            onClick={onOpen}
+            className="group relative mx-auto inline-flex items-center gap-2.5 rounded-full border border-stone-400/60 bg-white/90 px-8 py-3.5 text-sm font-medium text-ink-soft shadow-lift transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0"
+          >
+            <span>Open the letter</span>
+            <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-1 text-ink-soft/70" />
+          </button>
+        </BreathingButton>
       </div>
     </motion.section>
   );
 }
+

@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import type { Invitation } from '../types';
+import { BreathingButton } from './motion/BreathingButton';
+import { InCardMotes } from './motion/InCardMotes';
 
 export function QuestionScene({ invitation, onAccept }: { invitation: Invitation; onAccept: () => void }) {
   const [noAttempts, setNoAttempts] = useState(0);
@@ -19,6 +21,9 @@ export function QuestionScene({ invitation, onAccept }: { invitation: Invitation
 
   return (
     <section className="relative flex min-h-[34rem] flex-col justify-center text-center py-4">
+      {/* Background drifting ambient motes */}
+      <InCardMotes />
+
       {/* Polaroid Tape Corner */}
       <div 
         className="pointer-events-none absolute -top-4 right-8 h-6 w-24 rotate-12 bg-sunset-peach/70 shadow-tape border-y border-white/40 z-20"
@@ -28,20 +33,20 @@ export function QuestionScene({ invitation, onAccept }: { invitation: Invitation
       />
 
       {/* Decorative Wax Seal Icon */}
-      <div className="mx-auto mb-6 flex h-12 w-12 items-center justify-center rounded-full border border-accent-rose/50 bg-accent-rose/20 text-roseDeep shadow-sm">
+      <div className="mx-auto mb-6 flex h-12 w-12 items-center justify-center rounded-full border border-accent-rose/50 bg-accent-rose/20 text-roseDeep shadow-sm relative z-10">
         <Sparkles size={18} />
       </div>
 
-      <p className="font-handwriting text-2xl text-ink-soft/75">
+      <p className="font-handwriting text-2xl text-ink-soft/75 relative z-10">
         One small question...
       </p>
 
-      <h2 className="mt-2 font-serif text-3xl font-medium tracking-tight text-ink-soft md:text-4xl">
+      <h2 className="mt-2 font-serif text-3xl font-medium tracking-tight text-ink-soft md:text-4xl relative z-10">
         {invitation.question}
       </h2>
 
       {/* Handwritten reaction notes */}
-      <p className="mx-auto mt-5 min-h-[2rem] max-w-xs font-handwriting text-xl text-stone-500 transition-all duration-300">
+      <p className="mx-auto mt-5 min-h-[2rem] max-w-xs font-handwriting text-xl text-stone-500 transition-all duration-300 relative z-10">
         {noAttempts === 1 && 'Eh? Yakin mau bilang no? 🥺'}
         {noAttempts === 2 && 'Coba dipikir-pikir lagi pelan-pelan... 😭'}
         {noAttempts === 3 && 'Kok tega banget sih... 💔'}
@@ -51,28 +56,30 @@ export function QuestionScene({ invitation, onAccept }: { invitation: Invitation
       </p>
 
       {/* Action Zone */}
-      <div className="relative mt-10 flex flex-col items-center justify-center gap-6 min-h-[9rem] w-full">
-        {/* Yes Button: Vintage Stamp / Wax Seal Sticker */}
-        <motion.button
-          type="button"
-          onClick={onAccept}
-          whileHover={{
-            rotate: [-1.5, 1.5, -1.5, 1.5, 0],
-            transition: { duration: 0.35, ease: 'easeInOut' }
-          }}
-          whileTap={{ scale: 0.96 }}
-          style={{
-            transform: `scale(${yesScale})`,
-            transformOrigin: 'center',
-            transition: 'transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1)',
-            zIndex: 10 + noAttempts,
-          }}
-          className="relative inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-white/60 bg-roseDeep px-9 py-3.5 text-base font-serif font-medium text-white shadow-lift active:shadow-sm"
-        >
-          <span className="text-gold-foil text-sm">✦</span>
-          <span>YES!</span>
-          <span className="text-gold-foil text-sm">✦</span>
-        </motion.button>
+      <div className="relative mt-10 flex flex-col items-center justify-center gap-6 min-h-[9rem] w-full z-10">
+        {/* Yes Button: Vintage Stamp / Wax Seal Sticker wrapped with BreathingButton */}
+        <BreathingButton style={{ zIndex: 10 + noAttempts }}>
+          <motion.button
+            type="button"
+            onClick={onAccept}
+            whileHover={{
+              rotate: [-1.5, 1.5, -1.5, 1.5, 0],
+              transition: { duration: 0.35, ease: 'easeInOut' }
+            }}
+            whileTap={{ scale: 0.96 }}
+            style={{
+              transform: `scale(${yesScale})`,
+              transformOrigin: 'center',
+              transition: 'transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              zIndex: 10 + noAttempts,
+            }}
+            className="relative inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-white/60 bg-roseDeep px-9 py-3.5 text-base font-serif font-medium text-white shadow-lift active:shadow-sm"
+          >
+            <span className="text-gold-foil text-sm">✦</span>
+            <span>YES!</span>
+            <span className="text-gold-foil text-sm">✦</span>
+          </motion.button>
+        </BreathingButton>
 
         {/* No Button: Shy handwritten text fading into memory */}
         {noAttempts < 5 && (
@@ -94,3 +101,4 @@ export function QuestionScene({ invitation, onAccept }: { invitation: Invitation
     </section>
   );
 }
+

@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { Calendar, Clock, MapPin, Shirt, WalletCards, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { Invitation } from '../types';
+import { BreathingButton } from './motion/BreathingButton';
+import { InCardMotes } from './motion/InCardMotes';
 
 export function DatePlanScene({ invitation }: { invitation: Invitation }) {
   const details = [
@@ -15,9 +17,12 @@ export function DatePlanScene({ invitation }: { invitation: Invitation }) {
   ];
 
   return (
-    <section className="min-h-[34rem] py-2">
+    <section className="relative min-h-[34rem] py-2">
+      {/* Background drifting ambient motes */}
+      <InCardMotes />
+
       {/* Header with Washi Tape Accent */}
-      <div className="relative text-center pb-4">
+      <div className="relative text-center pb-4 z-10">
         <p className="font-handwriting text-2xl text-accent-rose">
           Our shared itinerary
         </p>
@@ -30,6 +35,7 @@ export function DatePlanScene({ invitation }: { invitation: Invitation }) {
           </p>
         )}
       </div>
+
 
       {/* Details Grid (Sticky Note & Polaroid Style) */}
       <div className="mt-6 space-y-3">
@@ -122,14 +128,16 @@ export function DatePlanScene({ invitation }: { invitation: Invitation }) {
       )}
 
       {/* Footer CTA & Suggestion Link */}
-      <div className="mt-9 text-center pb-2">
-        <button
-          type="button"
-          className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-400/60 bg-white px-9 py-3.5 text-sm font-serif font-medium text-ink-soft shadow-lift hover:shadow-md hover:-translate-y-0.5 transition-all active:translate-y-0"
-        >
-          <span>Can&apos;t wait for this date</span>
-          <Send size={14} className="text-accent-rose" />
-        </button>
+      <div className="mt-9 text-center pb-2 relative z-10">
+        <BreathingButton>
+          <button
+            type="button"
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-400/60 bg-white px-9 py-3.5 text-sm font-serif font-medium text-ink-soft shadow-lift hover:shadow-md hover:-translate-y-0.5 transition-all active:translate-y-0"
+          >
+            <span>Can&apos;t wait for this date</span>
+            <Send size={14} className="text-accent-rose" />
+          </button>
+        </BreathingButton>
 
         <p className="mt-4 font-sans text-xs leading-6 text-stone-400">
           Ada yang kurang pas?{' '}
@@ -141,6 +149,7 @@ export function DatePlanScene({ invitation }: { invitation: Invitation }) {
           </Link>
         </p>
       </div>
+
     </section>
   );
 }
